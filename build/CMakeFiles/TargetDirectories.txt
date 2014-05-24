@@ -1,0 +1,2 @@
+/Volumes/Macintosh HD/Volumes/Macintosh HD/Fidelius/sites/active/tobias/pocketsphinx.js/build/CMakeFiles/pocketsphinx.dir
+/Volumes/Macintosh HD/Volumes/Macintosh HD/Fidelius/sites/active/tobias/pocketsphinx.js/build/CMakeFiles/pocketsphinx.js.dir
