@@ -2,19 +2,42 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <title>PocketSphinx.js - Keyword spotting</title>
+    <title>~ ~ ~ ~ T O B I A S ~ ~ ~ ~</title>
+    <style>
+      body {
+        margin:0px;
+        padding:0px;
+        height:100%;
+        background: url(img/stars.gif);
+        -webkit-animation:bgscroll 20s infinite linear;
+      }
+
+      h2 {
+        padding:0px;
+        margin:0px 0px 20px 0px;
+      }
+
+      #container-element {
+        margin:0px;
+        color: #fff;
+        
+        height:100%;
+      }
+
+      @-webkit-keyframes bgscroll {
+      from {background-position:0 0;}
+      to {background-position:0 520px;}
+    }   
+    </style>
   </head>
   <body>
-    <h2>PocketSphinx.js live demo for keyword spotting</h2>
-    <ul>
-      <li>This demo works on recent versions of Chrome and Firefox with the Web Audio API, make sure it works for you and actually records audio.</li>
-      <li>Press "Start" and speak</li>
-    </ul>
-    <select id="keyword"></select>
+  <div id="container-element">
+    <h2>JOIN US</h2>
+   
     <button id="startBtn">Start</button>
     <button id="stopBtn">Stop</button>
     <span id="recording-indicator" style="border-radius: 10px; -moz-border-radius: 10px; -webkit-border-radius: 10px; width: 20px; height: 20px; background: red;"></span>
-    <h2>Number of spotted keywords</h2>
+    <h2>Count the nouns</h2>
     <div id="output" style="height:150px;overflow:auto;" >
     </div>
     <h2>Status</h2>
@@ -22,6 +45,24 @@
     <script src="js/jquery.js"></script>
     <script src="js/wordlist.js"></script>
     <script>
+    var prevWord = '';
+
+    function getGif(lastword) {
+      console.log('getgif: '+lastword);
+      $.getJSON("http://api.giphy.com/v1/gifs/search?q="+lastword+"&api_key=dc6zaTOxFJmzC", function(data) {
+        $('body').append("<img src='" + data.data[0].images.fixed_height_still.url + "'/>");
+      });
+    }
+
+      var keynouns = "Contest,Arguing,Lost,Escaping,Sleeping,Found,Fighting,Love,Journey,Mischief,Alive,Hurt,Meeting,Storm,Imprisoned,Planning,Time,Breaks,Parting,Transforming,Rescued,Revealed,Dying,Food,Axe,Returned,Ring,Clothes,Book,Sword,Door,Cauldron,Trap,Stairs,Fire,Key,Tree,Spell,Crown,Wall,Well,Treasure,Window,Gift,Beautiful,Foolish,Cursed,Brave,Frightened,Poisoned,Disguised,Happy,Fly,Hidden,Lucky,Talk,Healed,Sad,Tiny,Stolen,Ugly,Wicked,Wise,Strong,Faraway,Secret,Blind,lost,City,Crazy,Cave,Dungeon,Cottage,Sky,Garden,Forest,Mountain,Palace,Kitchen,Night,Road,River,Swamp,Tower,Village,Kingdom,Church,Home,Ruin,King,Beggar,Fairy,Prince,Brother,Sister,Giant,Princess,Child,Wolf,Page,Queen,Stepmother,Frog,Guard,Parent,Horse,Cook,Husband,Wife,Monster,Enemy,Old,Dragon,Thief,Orphan,Witch".toUpperCase();
+
+      var keynounsArr = keynouns.split(",");
+      console.log(keynounsArr);
+
+      var grammarKeywords = {numStates: 1, start: 0, end: 0, transitions: []};
+      for (var i = 0; i < keynounsArr.length; i++) {
+        grammarKeywords.transitions.push({from: 0, to: 0, logp: -999990, word: keynounsArr[i]});
+      };
 
       // These will be initialized later
       var recognizer, recorder, callbackManager, audioContext, outputContainer;
@@ -87,8 +128,8 @@
 
       // This starts recording. We first need to get the id of the keyword search to use
       var startRecording = function() {
-        var id = document.getElementById('keyword').value;
-        if (recorder && recorder.start(id)) displayRecording(true);
+        //var id = document.getElementById('keyword').value;
+        if (recorder && recorder.start()) displayRecording(true);
       };
 
       // Stops recording
@@ -100,7 +141,7 @@
       // Called once the recognizer is ready
       // We then add the grammars to the input select tag and update the UI
       var recognizerReady = function() {
-           updateKeywords();
+           //updateKeywords();
            recognizerReady = true;
            updateUI();
            updateStatus("Recognizer ready");
@@ -117,19 +158,23 @@
         }                          
       };
 
-      // This adds a keyword search from the array
-      // We add them one by one and call it again as
-      // a callback.
-      // Once we are done adding all grammars, we can call
-      // recognizerReady()
+      var feedGrammar = function(grammarKeywords, index, id) {
+        postRecognizerJob({command: 'addGrammar', data: grammarKeywords});
+        recognizerReady();
+      };
+
+      // To display the hypothesis sent by the recognizer
+      function updateHyp(hyp) {
+        if (outputContainer) outputContainer.innerHTML = hyp;
+      };
+
       var feedKeyword = function(g, index, id) {
-        if (id && (keywordIds.length > 0)) keywordIds[0].id = id.id;
+        if (id && (keynounsArr > 0)) keynounsArr[0] = id.id;
         if (index < g.length) {
-          keywordIds.unshift({title: g[index].title})
-	  postRecognizerJob({command: 'addKeyword', data: g[index].g},
-                             function(id) {feedKeyword(keywords, index + 1, {id:id});});
+          keywordIds.unshift(keynounsArr[0])
+    postRecognizerJob({command: 'addKeyword', data: keynounsArr[0]},
+                             function(id) {feedKeyword(keynounsArr, index + 1, {id:id});});
         } else {
-          //recognizer.postMessage({command: 'addKeyword', data: "ELEPHANT"});
           recognizerReady();
         }
       };
@@ -137,13 +182,13 @@
       // This adds words to the recognizer. When it calls back, we add grammars
       var feedWords = function(words) {
            postRecognizerJob({command: 'addWords', data: words},
-                        function() {feedKeyword(keywords, 0);});
+                        function() {feedGrammar(grammarKeywords, 0);});
       };
 
       // This initializes the recognizer. When it calls back, we add words
       var initRecognizer = function() {
           // You can pass parameters to the recognizer, such as : {command: 'initialize', data: [["-hmm", "my_model"], ["-fwdflat", "no"]]}
-          postRecognizerJob({command: 'initialize', data: [["-kws_threshold", "9"]]},
+          postRecognizerJob({command: 'initialize', data: [["-remove_noise", "yes"]]},
                             function() {
                                         if (recorder) recorder.consumers = [recognizer];
                                         feedWords(wordList);});
@@ -165,16 +210,27 @@
                   if ( e.data.hasOwnProperty('data')) data = e.data.data;
                   if(clb) clb(data);
                 }
-                // This is a case when the recognizer has a new count number
-                if (e.data.hasOwnProperty('count')) {
-                  var newCount = e.data.count;
-                  if (e.data.hasOwnProperty('final') &&  e.data.final) newCount = "Final: " + newCount;
-                  updateCount(newCount);
+                // This is a case when the recognizer has a new hypothesis
+                if (e.data.hasOwnProperty('hyp')) {
+                  var newHyp = e.data.hyp;
+                  var lastsp = newHyp.split(' ');
+                  var lastspLen = lastsp.length;
+                  //console.log(lastsp);
+                  var lastword = lastsp.pop();
+                  if (lastword !== prevWord && lastword !== '') {
+                    getGif(lastword);
+                  }
+                  
+                  if (e.data.hasOwnProperty('final') &&  e.data.final) newHyp = "Final: " + newHyp;
+                  updateHyp(newHyp);
+
+                  prevWord = lastword;
                 }
                 // This is the case when we have an error
                 if (e.data.hasOwnProperty('status') && (e.data.status == "error")) {
                   updateStatus("Error in " + e.data.command + " with code " + e.data.code);
                 }
+
             };
             // Once the worker is fully loaded, we can call the initialize function
             initRecognizer();
@@ -202,19 +258,19 @@
       startBtn.onclick = startRecording;
       stopBtn.onclick = stopRecording;
       };
-
       
        // This is the list of words that need to be added to the recognizer
        // This follows the CMU dictionary format
       // var wordList = [["ONE", "W AH N"], ["TWO", "T UW"], ["THREE", "TH R IY"], ["FOUR", "F AO R"], ["FIVE", "F AY V"], ["SIX", "S IH K S"], ["SEVEN", "S EH V AH N"], ["EIGHT", "EY T"], ["NINE", "N AY N"], ["ZERO", "Z IH R OW"], ["NEW-YORK", "N UW Y AO R K"], ["NEW-YORK-CITY", "N UW Y AO R K S IH T IY"], ["PARIS", "P AE R IH S"] , ["PARIS(2)", "P EH R IH S"], ["SHANGHAI", "SH AE NG HH AY"], ["SAN-FRANCISCO", "S AE N F R AE N S IH S K OW"], ["LONDON", "L AH N D AH N"], ["BERLIN", "B ER L IH N"], ["SUCKS", "S AH K S"], ["ROCKS", "R AA K S"], ["IS", "IH Z"], ["NOT", "N AA T"], ["GOOD", "G IH D"], ["GOOD(2)", "G UH D"], ["GREAT", "G R EY T"], ["WINDOWS", "W IH N D OW Z"], ["LINUX", "L IH N AH K S"], ["UNIX", "Y UW N IH K S"], ["MAC", "M AE K"], ["AND", "AE N D"], ["AND(2)", "AH N D"], ["O", "OW"], ["S", "EH S"], ["X", "EH K S"]];
 
       
-      var keywords = [{title: "ONE", g: "ONE"}, {title: "TWO", g: "TWO"}, {title: "NEW-YORK", g: "NEW-YORK"}, {title: "ELEPHANT", g: "I WENT TO THE BEACH"}];
+      var keywords = [{title: "ONE", g: "ONE"}, {title: "TWO", g: "TWO"}, {title: "NEW-YORK", g: "NEW-YORK"}, {title: "ELEPHANT", g: "ELEPHANT"}];
       var keywordIds = [];
     </script>
     <!-- These are the two JavaScript files you must load in the HTML,
     The recognizer is loaded through a Web Worker -->
     <script src="js/audioRecorder.js"></script>
     <script src="js/callbackManager.js"></script>
+    </div>
   </body>
 </html>
