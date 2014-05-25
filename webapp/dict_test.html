@@ -11,6 +11,7 @@
         background: url(img/stars.gif);
         -webkit-animation:bgscroll 20s infinite linear;
         font-family: sans-serif;
+        overflow: hidden;
       }
 
       h2 {
@@ -36,21 +37,6 @@
         height:100%;
       }
 
-      @-webkit-keyframes bgscroll {
-        from {background-position:0 0;}
-        to {background-position:0 520px;}
-      }   
-
-      @-webkit-keyframes gifscroll {
-        0% {right:0px; top:0px;}
-        2% {right: 200px; top:0px;}
-        100% {right: 200px; top:2000px;}
-      }   
-
-      @-webkit-keyframes gifscrolls {
-        from {right:0px;}
-        to {right: 200px;}
-      }   
 
       #startBtn {
         background-color: #0A68FF;
@@ -78,11 +64,39 @@
 
       .giphy {
         position: absolute;
-        right: 0px;
+        right: -500px;
         top: 0px;
         -webkit-animation:gifscroll 20s linear;
-        width: 300px;
+        width: 500px;
       }
+
+      #output {
+        font-size: 50px;
+        color: #2AAB13;
+        font-weight: bold;
+        height:150px;overflow:auto;
+        font-family: 'Vipond Octic';
+      }
+
+      #saybox {
+        margin-top:70px;
+      }
+
+      @-webkit-keyframes bgscroll {
+        from {background-position:0 0;}
+        to {background-position:0 520px;}
+      }   
+
+      @-webkit-keyframes gifscroll {
+        0% {right:-500px; top:0px;}
+        2% {right: 50px; top:0px;}
+        100% {right: 200px; top:2000px;}
+      }   
+
+      @-webkit-keyframes gifscrolls {
+        from {right:0px;}
+        to {right: 200px;}
+      }    
 
     </style>
   </head>
@@ -93,8 +107,10 @@
     <button id="startBtn">Start</button>
     <button id="stopBtn">Stop</button>
     <span id="recording-indicator" style="border-radius: 10px; -moz-border-radius: 10px; -webkit-border-radius: 10px; width: 20px; height: 20px; background: red;"></span>
-    <p>What you say?</p>
-    <div id="output" style="height:150px;overflow:auto;" >
+    <div id="saybox">
+      <!--<p>What you say?</p>-->
+      <div id="output">
+      </div>
     </div>
     <div id="status">
       <h3>Status</h3>
@@ -109,22 +125,19 @@
 
     function getGif(lastword) {
       console.log('getgif: '+lastword);
-      //var gif = data.data[0].images.fixed_height_still.url;
-      var gif = "img/jack.jpg";
-      $('#container-element').append("<img class='giphy' src='" + gif + "'/>");
-      // img.animate({
-      //   'right' : '200px'
-      // }, 5000, 'linear', function(el){
-      //   el.animate({
-      //     'top' : '2000px'
-      //   }, 5000, 'linear', function(){});
-        
-      // });
-      // $.getJSON("http://api.giphy.com/v1/gifs/search?q="+lastword+"&api_key=dc6zaTOxFJmzC", function(data) {
-      //   var img = $('body').append("<img class='giphy' src='" + gif + "'/>").animate({
-                      //   'top' : '2000px'
-                      // }, 5000, 'linear', function(){});
-     // });
+      
+      // placeholder when no internet
+      // var gif = "img/jack.jpg";
+      // $('#container-element').append("<img class='giphy' src='" + gif + "'/>");
+
+      
+      $.getJSON("http://api.giphy.com/v1/gifs/search?q="+lastword+"&api_key=dc6zaTOxFJmzC", function(data) {
+        var ran = Math.floor(Math.random(0,data.data.length-1));
+        var giftype = "fixed_width_downsampled";
+        //var giftype = "fixed_height_still";
+        var gif = data.data[ran].images[giftype].url;
+        var img = $('body').append("<img class='giphy' src='" + gif + "'/>");
+     });
     }
 
       var keynouns = "Contest,Arguing,Lost,Escaping,Sleeping,Found,Fighting,Love,Journey,Mischief,Alive,Hurt,Meeting,Storm,Imprisoned,Planning,Time,Breaks,Parting,Transforming,Rescued,Revealed,Dying,Food,Axe,Returned,Ring,Clothes,Book,Sword,Door,Cauldron,Trap,Stairs,Fire,Key,Tree,Spell,Crown,Wall,Well,Treasure,Window,Gift,Beautiful,Foolish,Cursed,Brave,Frightened,Poisoned,Disguised,Happy,Fly,Hidden,Lucky,Talk,Healed,Sad,Tiny,Stolen,Ugly,Wicked,Wise,Strong,Faraway,Secret,Blind,lost,City,Crazy,Cave,Dungeon,Cottage,Sky,Garden,Forest,Mountain,Palace,Kitchen,Night,Road,River,Swamp,Tower,Village,Kingdom,Church,Home,Ruin,King,Beggar,Fairy,Prince,Brother,Sister,Giant,Princess,Child,Wolf,Page,Queen,Stepmother,Frog,Guard,Parent,Horse,Cook,Husband,Wife,Monster,Enemy,Old,Dragon,Thief,Orphan,Witch".toUpperCase();
@@ -295,7 +308,8 @@
                   }
                   
                   if (e.data.hasOwnProperty('final') &&  e.data.final) newHyp = "Final: " + newHyp;
-                  updateHyp(newHyp);
+                  //updateHyp(newHyp);
+                  updateHyp(lastword);
 
                   prevWord = lastword;
                 }
