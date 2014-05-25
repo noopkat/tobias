@@ -6,15 +6,27 @@
     <style>
       body {
         margin:0px;
-        padding:0px;
+        padding:50px;
         height:100%;
         background: url(img/stars.gif);
         -webkit-animation:bgscroll 20s infinite linear;
+        font-family: sans-serif;
       }
 
       h2 {
         padding:0px;
         margin:0px 0px 20px 0px;
+        font-family: 'SuastOrnad tfb', 'Astro 867', Sans-Serif;
+        font-size: 96px;
+        font-weight: normal;
+      }
+
+      h3 {
+        padding:0px;
+        margin:0px 0px 20px 0px;
+        font-family: 'SuastOrnad tfb', 'Astro 867', Sans-Serif;
+        font-size: 20px;
+        font-weight: normal;
       }
 
       #container-element {
@@ -25,23 +37,71 @@
       }
 
       @-webkit-keyframes bgscroll {
-      from {background-position:0 0;}
-      to {background-position:0 520px;}
-    }   
+        from {background-position:0 0;}
+        to {background-position:0 520px;}
+      }   
+
+      @-webkit-keyframes gifscroll {
+        0% {right:0px; top:0px;}
+        2% {right: 200px; top:0px;}
+        100% {right: 200px; top:2000px;}
+      }   
+
+      @-webkit-keyframes gifscrolls {
+        from {right:0px;}
+        to {right: 200px;}
+      }   
+
+      #startBtn {
+        background-color: #0A68FF;
+        padding: 15px 25px 15px 25px;
+        border: none;
+        border-radius: 6px;
+        color: #fff;
+        font-size: 20px;
+      }
+
+      #stopBtn {
+        background-color: #DE3131;
+        padding: 15px 25px 15px 25px;
+        border: none;
+        border-radius: 6px;
+        color: #fff;
+        font-size: 20px;
+      }
+
+      #status {
+        position: absolute;
+        bottom: 50px;
+        line-height: 30px
+      }
+
+      .giphy {
+        position: absolute;
+        right: 0px;
+        top: 0px;
+        -webkit-animation:gifscroll 20s linear;
+        width: 300px;
+      }
+
     </style>
   </head>
   <body>
   <div id="container-element">
-    <h2>JOIN US</h2>
+    <h2>join us for a story</h2>
    
     <button id="startBtn">Start</button>
     <button id="stopBtn">Stop</button>
     <span id="recording-indicator" style="border-radius: 10px; -moz-border-radius: 10px; -webkit-border-radius: 10px; width: 20px; height: 20px; background: red;"></span>
-    <h2>Count the nouns</h2>
+    <p>What you say?</p>
     <div id="output" style="height:150px;overflow:auto;" >
     </div>
-    <h2>Status</h2>
-    <div id="current-status">Loading page</div>
+    <div id="status">
+      <h3>Status</h3>
+      <div id="current-status">Loading page</div>
+    </div>
+
+
     <script src="js/jquery.js"></script>
     <script src="js/wordlist.js"></script>
     <script>
@@ -49,9 +109,22 @@
 
     function getGif(lastword) {
       console.log('getgif: '+lastword);
-      $.getJSON("http://api.giphy.com/v1/gifs/search?q="+lastword+"&api_key=dc6zaTOxFJmzC", function(data) {
-        $('body').append("<img src='" + data.data[0].images.fixed_height_still.url + "'/>");
-      });
+      //var gif = data.data[0].images.fixed_height_still.url;
+      var gif = "img/jack.jpg";
+      $('#container-element').append("<img class='giphy' src='" + gif + "'/>");
+      // img.animate({
+      //   'right' : '200px'
+      // }, 5000, 'linear', function(el){
+      //   el.animate({
+      //     'top' : '2000px'
+      //   }, 5000, 'linear', function(){});
+        
+      // });
+      // $.getJSON("http://api.giphy.com/v1/gifs/search?q="+lastword+"&api_key=dc6zaTOxFJmzC", function(data) {
+      //   var img = $('body').append("<img class='giphy' src='" + gif + "'/>").animate({
+                      //   'top' : '2000px'
+                      // }, 5000, 'linear', function(){});
+     // });
     }
 
       var keynouns = "Contest,Arguing,Lost,Escaping,Sleeping,Found,Fighting,Love,Journey,Mischief,Alive,Hurt,Meeting,Storm,Imprisoned,Planning,Time,Breaks,Parting,Transforming,Rescued,Revealed,Dying,Food,Axe,Returned,Ring,Clothes,Book,Sword,Door,Cauldron,Trap,Stairs,Fire,Key,Tree,Spell,Crown,Wall,Well,Treasure,Window,Gift,Beautiful,Foolish,Cursed,Brave,Frightened,Poisoned,Disguised,Happy,Fly,Hidden,Lucky,Talk,Healed,Sad,Tiny,Stolen,Ugly,Wicked,Wise,Strong,Faraway,Secret,Blind,lost,City,Crazy,Cave,Dungeon,Cottage,Sky,Garden,Forest,Mountain,Palace,Kitchen,Night,Road,River,Swamp,Tower,Village,Kingdom,Church,Home,Ruin,King,Beggar,Fairy,Prince,Brother,Sister,Giant,Princess,Child,Wolf,Page,Queen,Stepmother,Frog,Guard,Parent,Horse,Cook,Husband,Wife,Monster,Enemy,Old,Dragon,Thief,Orphan,Witch".toUpperCase();
