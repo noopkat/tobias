@@ -6,9 +6,9 @@
     <title>~ ~ ~ ~ T O B I A S ~ ~ ~ ~</title>
     <style>
       body {
-        margin:0px;
-        padding:50px;
-        height:100%;
+        margin: 0px;
+        padding: 50px;
+        height: 100%;
         background: url(img/planets.jpg) repeat 0 0;
         -webkit-animation: bgscroll 150s infinite linear;
         font-family: sans-serif;
@@ -16,16 +16,16 @@
       }
 
       h2 {
-        padding:0px;
-        margin:0px 0px 40px 0px;
+        padding: 0px;
+        margin: 0px 0px 40px 0px;
         font-family: 'SuastOrnad tfb', sans-serif;
         font-size: 96px;
         font-weight: normal;
       }
 
       h3 {
-        padding:0px;
-        margin:0px 0px 10px 0px;
+        padding: 0px;
+        margin: 0px 0px 10px 0px;
         font-family: 'SuastOrnad tfb', sans-serif;
         font-size: 18px;
         font-weight: normal;
@@ -33,8 +33,7 @@
 
       #container-element {
         margin:0px;
-        color: #fff;
-        
+        color: #fff;        
         height:100%;
       }
 
@@ -82,6 +81,7 @@
         top: 0px;
         -webkit-animation: gifscroll 20s linear;
         width: 500px;
+        border-radius: 12px;
       }
 
       #output {
@@ -108,20 +108,16 @@
       }
 
       @-webkit-keyframes bgscroll {
-        from {background-position:0 1800px;}
+        from {background-position:0 3600px;}
         to {background-position:0 0px;}
       }   
 
       @-webkit-keyframes gifscroll {
         0% {right:-500px; top:0px;}
         2% {right: 50px; top:0px;}
-        100% {right: 200px; top:2000px;}
+        100% {right: 50px; top:2000px;}
       }   
 
-      @-webkit-keyframes gifscrolls {
-        from {right:0px;}
-        to {right: 200px;}
-      }    
 
       @-webkit-keyframes recording {
         0% {opacity: 0;}
@@ -165,14 +161,18 @@
       var keynouns = "Contest,Arguing,Lost,Escaping,Sleeping,Found,Fighting,Love,Journey,Mischief,Alive,Hurt,Meeting,Storm,Imprisoned,Planning,Time,Breaks,Parting,Transforming,Rescued,Revealed,Dying,Food,Axe,Returned,Ring,Clothes,Book,Sword,Door,Cauldron,Trap,Stairs,Fire,Key,Tree,Spell,Crown,Wall,Well,Treasure,Window,Gift,Beautiful,Foolish,Cursed,Brave,Frightened,Poisoned,Disguised,Happy,Fly,Hidden,Lucky,Talk,Healed,Sad,Tiny,Stolen,Ugly,Wicked,Wise,Strong,Faraway,Secret,Blind,lost,City,Crazy,Cave,Dungeon,Cottage,Sky,Garden,Forest,Mountain,Palace,Kitchen,Night,Road,River,Swamp,Tower,Village,Kingdom,Church,Home,Ruin,King,Beggar,Fairy,Prince,Brother,Sister,Giant,Princess,Child,Wolf,Page,Queen,Stepmother,Frog,Guard,Parent,Horse,Cook,Husband,Wife,Monster,Enemy,Old,Dragon,Thief,Orphan,Witch,GARB_AA,GARB_AE,GARB_AH,GARB_AO,GARB_AW,GARB_AY,GARB_B,GARB_CH,GARB_D,GARB_DH,GARB_EH,GARB_ER,GARB_EY,GARB_F,GARB_G,GARB_HH,GARB_IH,GARB_IY,GARB_JH,GARB_K,GARB_L,GARB_M,GARB_N,GARB_NG,GARB_OW,GARB_OY,GARB_P,GARB_R,GARB_S,GARB_SH,GARB_T,GARB_TH,GARB_UH,GARB_UW,GARB_V,GARB_W,GARB_Y,GARB_Z,GARB_ZH".toUpperCase();
 
       var keynounsArr = keynouns.split(",");
+
+      // how do you log-probability
       var prob = -999999;
 
       // add the keywords to the grammar in the correct gramma object format
       var grammarKeywords = {numStates: 1, start: 0, end: 0, transitions: []};
       for (var i = 0; i < keynounsArr.length; i++) {
+        // if the word is from the garbage group, assign it a different probability confidence filter
         if (keynounsArr[i].substr(0,4) === "GARB") {
           prob = -777777;
         }
+        // push!
         grammarKeywords.transitions.push({from: 0, to: 0, logp: prob, word: keynounsArr[i]});
       };
 
@@ -269,22 +269,6 @@
         if (outputContainer) outputContainer.innerHTML = hyp.toLowerCase();
       };
 
-      // get a gif of the last word spoken
-      function getGif(lastword) {
-      
-      // placeholder when no internet
-      // var gif = "img/jack.jpg";
-      // $('#container-element').append("<img class='giphy' src='" + gif + "'/>");
-
-      $.getJSON("http://api.giphy.com/v1/gifs/search?q="+lastword+"&api_key=dc6zaTOxFJmzC", function(data) {
-        var ran = Math.floor(Math.random(0,data.data.length-1));
-        //var giftype = "fixed_width_downsampled";
-        var giftype = "fixed_height_still";
-        var gif = data.data[ran].images[giftype].url;
-        var img = $('body').append("<img class='giphy' src='" + gif + "'/>");
-     });
-    }
-
       // This adds words (from wordList.js) to the recognizer. When it calls back, we add grammars
       var feedWords = function(words) {
            postRecognizerJob({command: 'addWords', data: words},
@@ -300,6 +284,28 @@
                                         // feed words from the wordList.js file
                                         feedWords(wordList);});
       };
+
+      // get a gif of the last word spoken
+      function getGif(lastword) {
+      
+        // placeholder when no internet
+        // var gif = "img/jack.jpg";
+        // $('#container-element').append("<img class='giphy' src='" + gif + "'/>");
+
+        $.getJSON("http://api.giphy.com/v1/gifs/search?q=" + lastword + "&api_key=dc6zaTOxFJmzC", function(data) {
+          // generate a random number to select a different gif each time from the bag
+          var ran = Math.floor(Math.random(0, data.data.length-1));
+
+          // animated image for realzies internet
+          var giftype = "fixed_width_downsampled";
+
+          // smaller, still image for tethered internet
+         //var giftype = "fixed_height_still";
+
+          var gif = data.data[ran].images[giftype].url;
+          var img = $('body').append("<img class='giphy' src='" + gif + "'/>");
+       });
+      }
 
       // When the page is loaded, we spawn a new recognizer worker and call getUserMedia to
       // request access to the microphone
@@ -380,7 +386,8 @@
         stopBtn.disabled = true;
         startBtn.onclick = startRecording;
         stopBtn.onclick = stopRecording;
-      };
+
+      }; //end onload
         
     </script>
 
