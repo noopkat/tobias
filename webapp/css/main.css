@@ -1,0 +1,120 @@
+body {
+  margin: 0px;
+  padding: 50px;
+  height: 100%;
+  background: url(../img/planets.jpg) repeat 0 0;
+  -webkit-animation: bgscroll 150s infinite linear;
+  font-family: sans-serif;
+  overflow: hidden; 
+}
+
+h2 {
+  padding: 0px;
+  margin: 0px 0px 40px 0px;
+  font-family: 'SuastOrnad tfb', sans-serif;
+  font-size: 96px;
+  font-weight: normal;
+  text-transform: lowercase;
+}
+
+h3 {
+  padding: 0px;
+  margin: 0px 0px 10px 0px;
+  font-family: 'SuastOrnad tfb', sans-serif;
+  font-size: 18px;
+  font-weight: normal;
+}
+
+#container-element {
+  margin:0px;
+  color: #fff;        
+  height:100%;
+}
+
+
+#startBtn {
+  background-color: #0A68FF;
+  padding: 15px 25px 15px 25px;
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 20px;
+  margin-right: 20px;
+}
+
+#startBtn:hover {
+  background-color: #0342A6;
+  cursor: pointer;
+}
+
+#stopBtn {
+  background-color: #F58C31;
+  padding: 15px 25px 15px 25px;
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 20px;
+  margin-right: 20px;
+}
+
+#stopBtn:hover {
+  background-color: #B51414;
+  cursor: pointer;
+}
+
+#status {
+  position: absolute;
+  bottom: 50px;
+  font-size: 12px;
+  line-height: 20px
+}
+
+.giphy {
+  position: absolute;
+  right: -500px;
+  top: 0px;
+  -webkit-animation: gifscroll 20s linear;
+  width: 500px;
+  border-radius: 12px;
+}
+
+#output {
+  font-size: 60px;
+  color: #2AAB13;
+  font-weight: bold;
+  height:150px;overflow:auto;
+  font-family: 'Adobe Caslon Pro', 'Vipond Octic';
+  font-style: italic;
+}
+
+#saybox {
+  margin-top: 70px;
+}
+
+#recording-indicator {
+  border-radius: 10px; 
+  -moz-border-radius: 10px; 
+  -webkit-border-radius: 10px; 
+  width: 20px; 
+  height: 20px; 
+  background: #ff0000;
+  -webkit-animation: recording 1s linear infinite;
+}
+
+@-webkit-keyframes bgscroll {
+  from {background-position:0 3600px;}
+  to {background-position:0 0px;}
+}   
+
+@-webkit-keyframes gifscroll {
+  0% {right:-500px; top:0px;}
+  2% {right: 50px; top:0px;}
+  100% {right: 50px; top:2000px;}
+}   
+
+
+@-webkit-keyframes recording {
+  0% {opacity: 0;}
+  50% {opacity: 1;}
+  100% {opacity: 0;}
+}
