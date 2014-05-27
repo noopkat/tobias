@@ -1,3 +1,10 @@
+@font-face
+{
+  font-family: SuastOrnadTfb;
+  src: url(../fonts/SuastOrnadTfb.ttf);
+  font-weight: normal;
+}
+
 body {
   margin: 0px;
   padding: 50px;
@@ -11,7 +18,7 @@ body {
 h2 {
   padding: 0px;
   margin: 0px 0px 40px 0px;
-  font-family: 'SuastOrnad tfb', sans-serif;
+  font-family: 'SuastOrnadTfb', sans-serif;
   font-size: 96px;
   font-weight: normal;
   text-transform: lowercase;
@@ -20,7 +27,7 @@ h2 {
 h3 {
   padding: 0px;
   margin: 0px 0px 10px 0px;
-  font-family: 'SuastOrnad tfb', sans-serif;
+  font-family: 'SuastOrnadTfb', sans-serif;
   font-size: 18px;
   font-weight: normal;
 }
