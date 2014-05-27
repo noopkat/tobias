@@ -109,7 +109,7 @@ var feedGrammar = function() {
   for (var i = 0; i < keynounsArr.length; i++) {
     // if the word is from the garbage group, assign it a different probability confidence filter
     if (keynounsArr[i].substr(0,4) === "GARB") {
-      prob = -5;
+      prob = -777777;
     }
     // push!
     grammarKeywords.transitions.push({from: 0, to: 0, logp: prob, word: keynounsArr[i]});
