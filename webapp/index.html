@@ -156,6 +156,7 @@
 
       var prevWord = '';
       var keywordIds = [];
+      var canSpeak = false;
 
       // these are the words we wanna listen for mmkay
       var keynouns = "Contest,Arguing,Lost,Escaping,Sleeping,Found,Fighting,Love,Journey,Mischief,Alive,Hurt,Meeting,Storm,Imprisoned,Planning,Time,Breaks,Parting,Transforming,Rescued,Revealed,Dying,Food,Axe,Returned,Ring,Clothes,Book,Sword,Door,Cauldron,Trap,Stairs,Fire,Key,Tree,Spell,Crown,Wall,Well,Treasure,Window,Gift,Beautiful,Foolish,Cursed,Brave,Frightened,Poisoned,Disguised,Happy,Fly,Hidden,Lucky,Talk,Healed,Sad,Tiny,Stolen,Ugly,Wicked,Wise,Strong,Faraway,Secret,Blind,lost,City,Crazy,Cave,Dungeon,Cottage,Sky,Garden,Forest,Mountain,Palace,Kitchen,Night,Road,River,Swamp,Tower,Village,Kingdom,Church,Home,Ruin,King,Beggar,Fairy,Prince,Brother,Sister,Giant,Princess,Child,Wolf,Page,Queen,Stepmother,Frog,Guard,Parent,Horse,Cook,Husband,Wife,Monster,Enemy,Old,Dragon,Thief,Orphan,Witch,GARB_AA,GARB_AE,GARB_AH,GARB_AO,GARB_AW,GARB_AY,GARB_B,GARB_CH,GARB_D,GARB_DH,GARB_EH,GARB_ER,GARB_EY,GARB_F,GARB_G,GARB_HH,GARB_IH,GARB_IY,GARB_JH,GARB_K,GARB_L,GARB_M,GARB_N,GARB_NG,GARB_OW,GARB_OY,GARB_P,GARB_R,GARB_S,GARB_SH,GARB_T,GARB_TH,GARB_UH,GARB_UW,GARB_V,GARB_W,GARB_Y,GARB_Z,GARB_ZH".toUpperCase();
@@ -209,7 +210,13 @@
       // This updates the UI when the app might get ready
       // Only when both recorder and recognizer are ready do we enable the buttons
       function updateUI() {
-        if (recorderReady && recognizerReady) startBtn.disabled = stopBtn.disabled = false;
+        if (recorderReady && recognizerReady) {
+          startBtn.disabled = stopBtn.disabled = false;
+          if (!canSpeak) {
+            updateStatus("You may now speak.");
+            canSpeak = true;
+          }
+        }
       };
 
       // This is just a logging window where we display the status
@@ -234,8 +241,8 @@
         // If a recognizer is ready, we pass it to the recorder
         if (recognizer) recorder.consumers = [recognizer];
         recorderReady = true;
-        updateUI();
         updateStatus("Audio recorder ready!");
+        updateUI();
       };
 
       // This starts recording. We first need to get the id of the keyword search to use
@@ -254,8 +261,8 @@
       // We then add the grammars to the input select tag and update the UI
       var recognizerReady = function() {
            recognizerReady = true;
-           updateUI();
            updateStatus("Recogniser ready!");
+           updateUI();
       };
 
       // load our grammar object into pocketsphinx
@@ -311,6 +318,7 @@
       // request access to the microphone
       window.onload = function() {
         outputContainer = document.getElementById("output");
+        updateStatus("Please wait, I'll tell you when you can speak.");
         updateStatus("Recogniser init, asking for microphone access...");
         callbackManager = new CallbackManager();
         spawnWorker("js/recognizer.js", function(worker) {
