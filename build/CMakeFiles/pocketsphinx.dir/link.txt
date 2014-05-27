@@ -1,1 +1,0 @@
-"/Volumes/Macintosh HD/Volumes/Macintosh HD/Volumes/Macintosh HD/Users/suziam/emsdk/emscripten/1.16.0/em++"  -fPIC  --bind   -shared -Wl,-soname,libpocketsphinx.so -o "/Volumes/Macintosh HD/Volumes/Macintosh HD/Volumes/Macintosh HD/Fidelius/sites/active/tobias/pocketsphinx.js/build/libpocketsphinx.so" @CMakeFiles/pocketsphinx.dir/objects1.rsp 
