@@ -47,7 +47,7 @@ if (annyang) {
 
   // update status when annyang is ready to go
   annyang.addCallback('start', function(){console.log('restarted')});
-    annyang.addCallback('error', function(){console.log('error')});
+  annyang.addCallback('error', function(){console.log('error')});
 
   // start listening
   annyang.start();
