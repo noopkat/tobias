@@ -73,7 +73,8 @@ h3 {
   position: absolute;
   bottom: 50px;
   font-size: 12px;
-  line-height: 20px
+  line-height: 20px;
+  display: none;
 }
 
 .giphy {
