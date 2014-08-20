@@ -1,33 +1,42 @@
-var nounsList = "Contest,Arguing,Lost,Escaping,Sleeping,Found,Fighting,Love,Journey,Mischief,Alive,Hurt,Meeting,Storm,Imprisoned,Planning,Time,Breaks,Parting,Transforming,Rescued,Revealed,Dying,Food,Axe,Returned,Ring,Clothes,Book,Sword,Door,Cauldron,Trap,Stairs,Fire,Key,Tree,Spell,Crown,Wall,Well,Treasure,Window,Gift,Beautiful,Foolish,Cursed,Brave,Frightened,Poisoned,Disguised,Happy,Fly,Hidden,Lucky,Talk,Healed,Sad,Tiny,Stolen,Ugly,Wicked,Wise,Strong,Faraway,Secret,Blind,lost,City,Crazy,Cave,Dungeon,Cottage,Sky,Garden,Forest,Mountain,Palace,Kitchen,Night,Road,River,Swamp,Tower,Village,Kingdom,Church,Home,Ruin,King,Beggar,Fairy,Prince,Brother,Sister,Giant,Princess,Child,Wolf,Page,Queen,Stepmother,Frog,Guard,Parent,Horse,Cook,Husband,Wife,Monster,Enemy,Old,Dragon,Thief,Orphan,Witch";
-var nouns = nounsList.split(",");
-var outputContainer = document.getElementById('output');
-var statusBox = document.getElementById('current-status');
-var commands = {};
+var nounsList = 'Contest,Arguing,Lost,Escaping,Sleeping,Found,Fighting,Love,Journey,Mischief,Alive,Hurt,Meeting,Storm,Imprisoned,Planning,Time,Breaks,Parting,Transforming,Rescued,Revealed,Dying,Food,Axe,Returned,Ring,Clothes,Book,Sword,Door,Cauldron,Trap,Stairs,Fire,Key,Tree,Spell,Crown,Wall,Well,Treasure,Window,Gift,Beautiful,Foolish,Cursed,Brave,Frightened,Poisoned,Disguised,Happy,Fly,Hidden,Lucky,Talk,Healed,Sad,Tiny,Stolen,Ugly,Wicked,Wise,Strong,Faraway,Secret,Blind,lost,City,Crazy,Cave,Dungeon,Cottage,Sky,Garden,Forest,Mountain,Palace,Kitchen,Night,Road,River,Swamp,Tower,Village,Kingdom,Church,Home,Ruin,King,Beggar,Fairy,Prince,Brother,Sister,Giant,Princess,Child,Wolf,Page,Queen,Stepmother,Frog,Guard,Parent,Horse,Cook,Husband,Wife,Monster,Enemy,Old,Dragon,Thief,Orphan,Witch',
+    nouns = nounsList.split(','),
+    outputContainer = document.getElementById('output'),
+    statusBox = document.getElementById('current-status'),
+    commands = {},
+    dombody = $('body');
 
-function getGif(lastword) {
-  $.getJSON("http://api.giphy.com/v1/gifs/search?q=" + lastword + "&api_key=dc6zaTOxFJmzC", function(data) {
-    var imgList = data.data,
-        // generate a random number to select a different gif each time from the bag
-        rand = Math.floor(Math.random(0, imgList.length-1)),
-        // animated image for realzies internet
-        gifType = "fixed_width_downsampled",
-        gifFile = imgList[rand].images[gifType].url;
+function getGif(match) {
+  var url = 'http://api.giphy.com/v1/gifs/search?q=',
+      key = 'dc6zaTOxFJmzC';
 
-    $('body').append("<img class='giphy' src='" + gifFile + "'/>");
-    outputContainer.innerHTML = lastword.toLowerCase();
+  $.getJSON(url + match + '&api_key=' + key, function(data) {
+    chooseAndDisplayGif(data.data);
   });
 };
 
-// This is just a logging window where we display the status
-function updateStatus(newStatus) {
-  statusBox.innerHTML += "<br/>" + newStatus;
-};
+function chooseAndDisplayGif(imgList) {
+  var ill = imgList.length,
+       // generate a random number to select a different gif each time from the bag
+      rand = Math.floor(Math.random() * (0 - (ill-1))),
+      // animated image for realzies internet
+      gifType = 'fixed_width_downsampled',
+      gifFile = imgList[rand].images[gifType].url;
+
+  dombody.append('<img class="giphy" src="' + gifFile + '"/>');
+}
+
+function displayMatch(match) {
+  outputContainer.innerHTML = match.toLowerCase();
+}
 
 function commandHandler() {
-    var args = Array.prototype.slice.call(arguments);
-    var meta = args[args.length-1];
+    var args = Array.prototype.slice.call(arguments),
+        meta = args[args.length-1];
+
     if (typeof meta === 'object' && meta.hasOwnProperty('recognisedPhrase')) {
-      getGif(meta.recognisedPhrase);
+      var match = meta.recognisedPhrase;
+      getGif(match);
+      displayMatch(match);
     }
 };
 
