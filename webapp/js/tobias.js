@@ -1,5 +1,5 @@
 (function(global) {
-  "use strict";
+  'use strict';
 
   function Tobias() {
     if (Tobias.prototype._singletonInstance) {
@@ -40,14 +40,14 @@
     }
 
     function commandHandler() {
-        var args = Array.prototype.slice.call(arguments),
-            meta = args[args.length - 1];
+      var args = Array.prototype.slice.call(arguments),
+          meta = args[args.length - 1];
 
-        if (typeof meta === 'object' && meta.hasOwnProperty('recognisedPhrase')) {
-          var match = meta.recognisedPhrase;
-          getGif(match);
-          displayMatch(match);
-        }
+      if (typeof meta === 'object' && meta.hasOwnProperty('recognisedPhrase')) {
+        var match = meta.recognisedPhrase;
+        getGif(match);
+        displayMatch(match);
+      }
     };
 
     function setUpAnnyang(annyang) {
